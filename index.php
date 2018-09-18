@@ -62,17 +62,7 @@
 	
 	
 	
-	
-	<br></br>
-	<font size="23"><q><em>Element</em></q></font> <p>- Tundmatu Autor</p>
-	<font size="15"><abbr title="ära seda vajuta"><p><a href="http://bfy.tw/Jkk2" style="color:black">Literally sina siin lehel</a></p></abbr><br/>
-	<abbr title="kui miskit tahad klikkida kliki siia või VALIDATIONit"><a href="https://courses.cs.ut.ee/" style="color:black">(Aye)</a> </abbr><br/>
 
-
-
-<abbr title="Üks vähe mönusam lühifilm"><a href="https://youtu.be/Cbk980jV7Ao" style="color:black">Valideerimine</a></abbr><br/>
-<bbr title="Asi mida peab testima"><a href="https://howsecureismypassword.net/" style="color:darkred">Parool</a></abbr>
-</font>
 </body>
 
 </html>
