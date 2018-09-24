@@ -3,12 +3,15 @@
 	$firstName = "Patrick";
 	$lastName = "Paidla";
 	$randm = "Pats";
-	$dateToday = date("d.m.Y");
+	$dayToday = date("d");
+	$yearToday = date("Y");
+	$monthToday = date("m");
 	$hourNow = date("G");
 	$minNow = date("G.i");
 	$partOfDay = "";
 	$weekdayNow = date("N");
 	$daynames = ["esmaspäev","teisipäev","kolmapäev","neljapäev","reede","laupäev","pühapäev"];
+	$monthnames=["jaanuar","veebruar","märts","aprill","mai","juuni","juuli","august","september","oktoober","november","detsember"];
 	//echo $daynames[1];
 	//var_dump($daynames);
 	if ($hourNow < 8){
@@ -62,12 +65,12 @@
 	 ?>, IF18</h1><br/>	
 	<p><b>rohkem siin polegi, aint <a href="https://www.tlu.ee/" target="_blank">TLÜ</a>, lol</b></p>
 	<p>
-	Tundides tehtu: <a href="photo.php" target="_blank">meemileht, </a><a href="page.php" target="_blank">leht</a>
+	Tundides tehtu: <a href="photo.php" target="_blank">meemileht,<a href="photo2.php" target="_blank"> PäevaKekk, </a><a href="page.php" target="_blank"> leht</a>
 	</p>
 		<?php
 			//echo "<p>Tänane kuupäev on: " .$dateToday.".</p> \n";
 			//echo "<p>Täna on ".$weekdayNow.", " .$dateToday.".</p> \n";
-			echo "<p>Täna on ".$daynames[$weekdayNow-1].", " .$dateToday.".</p> \n";
+			echo "<p>Täna on ".$daynames[$weekdayNow-1].", " .$dayToday.". " .$monthnames[$monthToday-1]." " .$yearToday.".</p> \n";
 			echo "<p>Lehe avamise hetkel oli kell: ".date("H:i:s").". Käes on ". $partOfDay. ".</p>\n";
 			echo "<p>Ja kellaaeg sealjuures: ".$hourNow. ".</p> \n";
 			//foreach($daynames as $weekdayNow){
