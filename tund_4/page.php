@@ -1,4 +1,7 @@
 <?php
+	//kutusme välja funktsioonide faili
+	require("functions.php");
+	
 	//echo "minu esimene PHP!"; //php on backend keel, sest see toimib serveris
 	$firstName = "Kodanik";
 	$lastName = "Tundmatu";
@@ -9,13 +12,21 @@
 	//var_dump($_POST);
 	//echo $monthToday;
 	if (isset($_POST["firstName"])){
-		$firstName = $_POST["firstName"];
+		$firstName = test_input($_POST["firstName"]);
+		//$firstName = $_POST["firstName"];
 	}
 	if (isset($_POST["lastName"])){
-		$lastName = $_POST["lastName"];
+		$lastName = test_input($_POST["lastName"]);
 		
 	
 	}
+	
+	//random funktsioon
+	function fullname(){
+		$GLOBALS["fullname"] = $GLOBALS["firstName"]. " ".$GLOBALS["lastName"];	
+	}
+	$fullname= "";
+	fullname();
 ?>
 
 <!DOCTYPE html>
@@ -29,7 +40,7 @@
 	</title>
 </head>
 
-<body background="lighty.jpg">  <!--"lighty.jpg"-->  <!--style="transform:rotate(90deg);" -->
+<body background="c0c0c0c0">  <!--"lighty.jpg"-->  <!--style="transform:rotate(90deg);" -->
 <font color="#6a129f">
 	<h1>
 	 <font color="6a129f" ><?php echo $firstName. " ". $lastName; ?>, IF18</h1></font><br/>	
@@ -37,14 +48,14 @@
 	
 	<hr>
 	
-	<form method="POST"> 
+	<form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 	<label><font color="#6a129f">Eesnimi:</font> </label>
 	<input type="text" name="firstName">
 	<label><font color="#6a129f">Perekonnanimi:</font></label>
 	<input type="text" name="lastName">
 	<label><font color="#6a129f">Sünniaasta: </font></label>
 	<input type="number" min="1914" max="2000" value="1998" name="birthYear">
-	<select name="birthMonth"> 
+	<!--<select name="birthMonth">
 
 		<option value="1"<?php if ($monthToday== '1'){echo 'selected';}?>>jaanuar</option>
   		<option value="2"<?php if ($monthToday== '2'){echo 'selected';}?>>veebruar</option>
@@ -58,8 +69,20 @@
  		<option value="10"<?php if ($monthToday== '10'){echo 'selected';}?>>oktoober</option>
   		<option value="11"<?php if ($monthToday== '11'){echo 'selected';}?>>november</option>
   		<option value="12"<?php if ($monthToday== '12'){echo 'selected';}?>>detsember</option> 
-	</select>
+	</select> -->
+	<?php
+		echo '<select name="birthMonth">'."\n";
+		for ($i=1; $i <13; $i ++){
+			echo '<option value="' .$i.'"';
+			if ($i == $monthToday){
+				echo " selected";
+			}
+			echo ">".$monthnames[$i-1]. "</option>" ;
+		}
+			echo '</select>';
+	?>
 	<br>
+
 	<input type="submit" name="submitUserData" value="Saada andmed">
 	</form>
 	<hr>
@@ -68,7 +91,7 @@
 
 	<?php
 		if (isset($_POST["firstName"])){
-			echo "<p><font color='#6a129f'>Olete elanud järgnevatel aastatel: </font></p> \n";
+			echo "<p><font color='#6a129f'>".$fullname.", olete elanud järgnevatel aastatel: </font></p> \n";
 			echo "<ol> \n";
 			for ($i = $_POST["birthYear"]; $i <=date("Y");$i++){
 				echo "<li>".$i."</li> \n";
