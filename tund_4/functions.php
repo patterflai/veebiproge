@@ -3,7 +3,7 @@
 	require("../../../config.php");
 	//echo $GLOBALS["serverUsername"];
 	$database = "if18_patrick_pa_1";
-	 //anonüümse sõnumi salvestamine
+	 //anonüümse sõnumi salvestamin
 	 function saveamsg($msg){
 		$notice = "";
 		//serveri ühendus (server, kasutaja, parool, andmebaas)
@@ -41,7 +41,37 @@
 		return $msgHTML;
 		 
 	 }
+	function addcat($catname, $catcolor,$catlength){
+		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+		$stmt = $mysqli->prepare("INSERT INTO kass(nimi, v2rv, saba) VALUES(?,?,?)");
+		echo $mysqli->error;
+		$stmt->bind_param("ssi", $catname,$catcolor,$catlength);
+		$stmt->execute();
+		$stmt->close();
+	}
+		
+	 function showcats(){
+		 $mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"],$GLOBALS["database"]);
+		$stmt = $mysqli->prepare("SELECT * FROM kass");
+		$id = "";
+		$name = "";
+		$color = "";
+		$tail_length = "";
+		$stmt-> bind_result($id, $name,$color,$tail_length);
+		$stmt -> execute();
+		while($stmt->fetch()) {
+        $cats[] = [
+            'id_kass' => $id,
+            'nimi' => $name,
+            'v2rv' => $color,
+            'saba' => $tail_length];
+		}
+		$stmt->close();
+		return $cats;
 	
+	}
+
+		 
 	//tekstsisestuse kontroll
 	function test_input($data) {
 		$data = trim($data);
