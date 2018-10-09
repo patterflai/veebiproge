@@ -4,36 +4,104 @@
 	//echo $GLOBALS["serverUsername"];
 	$database = "if18_patrick_pa_1";
 	 //anonüümse sõnumi salvestamin
-	 
-	 function signup($firstName,$lastName,$birthDate,$gender,$email, $password){
-		 $notice = "";
-		 $mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
-		 $select = mysqli_query($mysqli, "SELECT 'id' FROM vpusers WHERE email = '".$_POST["email"]."'" or exit(mysqli_error($mysqli)));
-		 if(mysqli_num_rows($select)){
-			 exit("email on kasutuses");
-			 echo "email on kasutuses";
-		 }else{
-
-		 $stmt = $mysqli->prepare("INSERT INTO vpusers(firstname, lastname, birthdate, gender, email, password) VALUES(?,?,?,?,?,?)");
-		echo $mysqli->error;
-		//valmistame parooli salvestamiseks- krpteerime, teeme räsi
-		 $options = [
-		 "cost"=> 12,
-		 "salt" => substr(sha1(rand()), 0,22),];
-		 $pwdhash = password_hash($password, PASSWORD_BCRYPT, $options);
-		$stmt->bind_param("sssiss", $firstName,$lastName,$birthDate,$gender,$email,$pwdhash);
+	 //võtan kasutusele sessiooni
+	 session_start();
+	 //laenh sõnumi valideerimiseks
+	function readmsgforvalidation($editId){
+	$notice = "";
+	$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+	$stmt = $mysqli->prepare("SELECT message FROM vpamsg WHERE id = ?");
+	$stmt->bind_param("i", $editId);
+	$stmt->bind_result($msg);
+	$stmt->execute();
+	if($stmt->fetch()){
+		$notice = $msg;
+	}
+	$stmt->close();
+	$mysqli->close();
+	return $notice;
+  }
+	function readallunvalidatedmessages(){
+	$notice = "<ul> \n";
+	$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+	$stmt = $mysqli->prepare("SELECT id, message FROM vpamsg WHERE accepted IS NULL ORDER BY id DESC");
+	echo $mysqli->error;
+	$stmt->bind_result($id, $msg);
+	$stmt->execute();
+	
+	while($stmt->fetch()){
+		$notice .= "<li>" .$msg .'<br><a href="validatemessage.php?id=' .$id .'">Valideeri</a>' ."</li> \n";
+	}
+	$notice .= "</ul> \n";
+	$stmt->close();
+	$mysqli->close();
+	return $notice;
+  }
+	 function signin($email, $password){
+		$notice = "";
+		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+		$stmt = $mysqli->prepare("SELECT id, firstname, lastname, password FROM vpusers WHERE email=?");
+		$mysqli->error;
+		$stmt->bind_param("s",$email);
+		$stmt->bind_result($idFromDb, $firstnameFromDb, $lastnameFromDb, $passwordFromDb);
 		if($stmt->execute()){
-			$notice= "Uue kasutaja lisamine õnnestus!";
-		}else{
-			$notice="Kasutaja lisamisel tekkis tõrge ;( ".$stmt->error;
+			//kui õnnestus andmebaasi lugemine
+			if($stmt->fetch()){
+				//kasutaja leiti, kontrollime aprooli
+				if(password_verify($password, $passwordFromDb)){
+					//pwd õige
+					$notice="Sisselogimine õnnestus!";	
+					$_SESSION["userId"] = $idFromDb;
+					$_SESSION["firstName"] = $firstnameFromDb;
+					$_SESSION["lastName"] = $lastnameFromDb;
+					$stmt->close();
+					$mysqli->close();
+					header("Location: main.php");
+					exit();
+				}else{
+					$notice = "VAle parool!";
+				}
+			}else{
+				$notice="Sellist kasutajat (".$email.") ei leitud!";
+			}
+		} else {
+		$notice = "tekkis tehiniline viga".$stmt->error;
 		}
-		
 		$stmt->close();
 		$mysqli->close();
-		return $notice;
-		 }
-		
+		return $notice; 
 	 }
+	 
+	function signup($name, $surname, $email, $gender, $birthDate, $password){
+		$notice = "";
+		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+		//kontrollime, ega kasutajat juba olemas pole
+		$stmt = $mysqli->prepare("SELECT id FROM vpusers WHERE email=?");
+		echo $mysqli->error;
+		$stmt->bind_param("s",$email);
+		$stmt->execute();
+		if($stmt->fetch()){
+		//leiti selline, seega ei saa uut salvestada
+		$notice = "Sellise kasutajatunnusega (" .$email .") kasutaja on juba olemas! Uut kasutajat ei salvestatud!";
+		} else {
+		$stmt->close();
+		$stmt = $mysqli->prepare("INSERT INTO vpusers (firstname, lastname, birthdate, gender, email, password) VALUES(?,?,?,?,?,?)");
+    	echo $mysqli->error;
+			$options = ["cost" => 12, "salt" => substr(sha1(rand()), 0, 22)];
+			$pwdhash = password_hash($password, PASSWORD_BCRYPT, $options);
+			$stmt->bind_param("sssiss", $name, $surname, $birthDate, $gender, $email, $pwdhash);
+			if($stmt->execute()){
+				$notice = "ok";
+	    } else {
+			$notice = "error" .$stmt->error;	
+	    }
+	}
+	$stmt->close();
+	$mysqli->close();
+	return $notice;
+  }
+  
+
 	 function saveamsg($msg){
 		$notice = "";
 		//serveri ühendus (server, kasutaja, parool, andmebaas)

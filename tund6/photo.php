@@ -28,7 +28,7 @@
 	<h1>
 	 <?php echo $firstName. " ". $lastName; ?>, IF18</h1><br/>	
 	<p><b>rohkem siin polegi, aint <a href="https://www.tlu.ee/" target="_blank">TLÜ</a>, lol</b></p>
-	
+	<li><a href="main.php">Tagasi</a> pealehele!</li>
 	<?php
 	//<img src="" alt="pilt">
 	for($i =0; $i< count($picFiles); $i++){
