@@ -6,6 +6,63 @@
 	 //anonüümse sõnumi salvestamin
 	 //võtan kasutusele sessiooni
 	 session_start();
+	 
+	 function listusers(){
+		$notice="";
+		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+		$stmt = $mysqli->prepare("SELECT firstname, lastname, email FROM vpusers WHERE id !=?");
+		$stmt->bind_param("i",$_SESSION["userId"]);
+		$stmt->bind_result($firstname,$lastname, $email);
+		if($stmt->execute()){
+		$notice .= "<ol> \n";
+	  while($stmt->fetch()){
+		 $notice .= "<li>" .$firstname ." " .$lastname .", kasutajatunnus: " .$email ."</li> \n";
+	  }
+	  $notice .= "</ol> \n";
+	} else {
+		$notice = "<p>Kasutajate nimekirja lugemisel tekkis tehniline viga! " .$stmt->error;
+	}
+	
+	$stmt->close();
+	$mysqli->close();
+	return $notice;
+  }
+  
+	 function validatemsg($editId,$validation){
+		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+		$stmt= $mysqli->prepare("update vpamsg set accepted=?, acceptedby=?, accepttime=now() where id=?");
+		$stmt->bind_param("iii", $_POST["validation"],$_SESSION["userId"],  $editId);
+		if($stmt -> execute()){
+			echo "toimib";
+			header("Location: validatemsg.php");
+			exit();
+		} else {
+			echo "Tekkis viga: " .$stmt->error;
+	}
+	$stmt->close();
+	$mysqli->close();
+  }
+	function allvalidmessages(){
+		$html="";
+		$accepted=1;
+		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+		$stmt=$mysqli->prepare("select message from vpamsg where accepted=? order by accepted desc");
+		echo $mysqli->error;
+		$stmt ->bind_param("i", $accepted);
+		$stmt ->bind_result($msg);
+		$stmt -> execute();
+		while($stmt -> fetch()){
+			$html .="<p>".$msg."</p> \n";
+	
+	}
+	$stmt ->close();
+	$mysqli->close();
+	if(empty($html)){
+		$html = "<p>Kontrollitud sõnumeid pole.</p>";
+	}
+	return $html;
+	}
+	 
 	 //laenh sõnumi valideerimiseks
 	function readmsgforvalidation($editId){
 	$notice = "";

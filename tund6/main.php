@@ -28,7 +28,9 @@
 	<ul>
 	<li>Koduleht</li>
 	<li><a href="photo.php">Meemid</a></li>
+	<li><a href="addmsg.php">Sõnumite lisamine</a></li>
 	<li><a href="validatemsg.php">Valideeri anonüümseid sõnumeid</a></li>
+	<li><a href="users.php">liikmed</a></li>
 	<li><a href="?logout=1">Väljalogimine</a></li>
 	</ul>
 	
