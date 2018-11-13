@@ -12,7 +12,9 @@
 			}
 		
 	}
-
+  $pageTitle = "Sõnumi lisamine";
+  //echo $profilePic;
+  require("header.php");
 ?>
 
 <!DOCTYPE html>

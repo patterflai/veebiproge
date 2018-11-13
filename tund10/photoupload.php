@@ -82,7 +82,7 @@
 				$myPhoto->changePhotoSize(600,400);
 				$myPhoto->addWatermark();
 				$myPhoto->addTextToImage();
-				$myphoto->savePhoto($target_file);
+				$notice = $myPhoto->savePhoto($target_file);
 				unset($myPhoto);
 				
 				//kui salvestamine õnnestus

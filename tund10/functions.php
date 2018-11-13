@@ -1,6 +1,6 @@
 <?php
   require("../../../config.php");
-  $database = "if18_patrick_pa_!";
+  $database = "if18_patrick_pa_1";
   session_start();
   
   function addUserPhotoData($fileName){
